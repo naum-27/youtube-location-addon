@@ -46,8 +46,12 @@ export default async function handler(req, res) {
                 },
             });
         } catch (aiError) {
-            console.error('Gemini SDK Error:', aiError);
-            return res.status(502).json({ error: 'Failed to connect to AI service' });
+            console.error('CRITICAL: Gemini SDK generateContent failed:', aiError.message);
+            console.error('Full Error Object:', JSON.stringify(aiError, null, 2));
+            return res.status(502).json({
+                error: 'Failed to connect to AI service',
+                message: aiError.message
+            });
         }
 
         let resultText = result.response.text();
