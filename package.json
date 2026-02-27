@@ -1,0 +1,14 @@
+{
+    "name": "youtube-location-addon",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "Vercel serverless function to guess location from YouTube video info",
+    "main": "api/guess.js",
+    "scripts": {
+        "test": "node test-api.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {}
+}
