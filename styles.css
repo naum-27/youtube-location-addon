@@ -1,25 +1,41 @@
 #yt-geo-location-v2 {
     display: inline-flex !important;
     align-items: center !important;
-    background-color: #272727 !important;
-    color: #ffffff !important;
-    padding: 6px 12px !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    /* Default for Dark Mode */
+    color: #f1f1f1 !important;
+    padding: 0 16px !important;
+    height: 36px !important;
     border-radius: 18px !important;
     font-size: 14px !important;
     font-weight: 500 !important;
-    margin-top: 8px !important;
-    margin-bottom: 8px !important;
+    margin-right: 8px !important;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
     cursor: default !important;
     transition: background-color 0.2s !important;
     font-family: "Roboto", "Arial", sans-serif !important;
     border: none !important;
     width: fit-content !important;
     position: relative !important;
-    z-index: 9999 !important;
+    z-index: 1 !important;
+    /* Lower z-index to blend with actions */
+    line-height: 36px !important;
 }
 
 #yt-geo-location-v2:hover {
-    background-color: #3f3f3f !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Light Mode Override */
+html:not([dark]) #yt-geo-location-v2 {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    color: #0f0f0f !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+html:not([dark]) #yt-geo-location-v2:hover {
+    background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
 #yt-geo-debug-btn {
@@ -31,22 +47,16 @@
     background: #FF0000 !important;
     color: white !important;
     border: none !important;
-    padding: 5px 15px !important;
-    border-bottom-left-radius: 10px !important;
-    border-bottom-right-radius: 10px !important;
+    padding: 4px 12px !important;
+    border-bottom-left-radius: 8px !important;
+    border-bottom-right-radius: 8px !important;
     font-family: Roboto, Arial, sans-serif !important;
-    font-size: 12px !important;
+    font-size: 11px !important;
+    font-weight: bold !important;
     cursor: pointer !important;
+    opacity: 0.8 !important;
 }
 
 #yt-geo-debug-btn:hover {
-    background: #CC0000 !important;
-}
-
-html[system-icons] #yt-geo-location-v2 {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-html[system-icons] #yt-geo-location-v2:hover {
-    background-color: rgba(255, 255, 255, 0.2) !important;
+    opacity: 1 !important;
 }

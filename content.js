@@ -59,58 +59,56 @@ function injectBadge(locationData, fallback = false) {
         badge.style.setProperty('z-index', '10000', 'important');
         document.body.appendChild(badge);
     } else {
-        const titleElement = document.querySelector('h1.ytd-watch-metadata');
-        if (titleElement) {
-            titleElement.parentElement.insertBefore(badge, titleElement.nextSibling);
-            console.log('Badge injected into YouTube header.');
+        const actionsContainer = document.querySelector('#top-level-buttons-computed') ||
+            document.querySelector('ytd-menu-renderer.ytd-watch-metadata');
+
+        if (actionsContainer) {
+            // Inject at the beginning of the action buttons list
+            actionsContainer.insertBefore(badge, actionsContainer.firstChild);
+            console.log('Badge injected in front of action buttons (Like button area).');
+        } else {
+            // Fallback to title if actions menu is not found
+            const titleElement = document.querySelector('h1.ytd-watch-metadata');
+            if (titleElement) {
+                titleElement.parentElement.insertBefore(badge, titleElement.nextSibling);
+                console.log('Action menu not found, falling back to title injection.');
+            }
         }
     }
 }
 
-function injectDebugButton() {
-    if (document.getElementById('yt-geo-debug-btn')) return;
-
-    const btn = document.createElement('button');
-    btn.id = 'yt-geo-debug-btn';
-    btn.innerText = '📍 Trigger Geo-Check';
-
-    btn.addEventListener('click', async () => {
-        console.log('Manual trigger clicked!');
-        const titleElement = document.querySelector('h1.ytd-watch-metadata');
-        const titleText = titleElement?.innerText?.trim() || document.title.replace(' - YouTube', '');
-        const description = document.querySelector('#description-inline-expander')?.innerText || 'Manual Check';
-
-        console.log('Sending to API:', { title: titleText, description });
-        const locationData = await fetchLocation(titleText, description);
-        injectBadge(locationData, !titleElement);
-    });
-
-    document.body.appendChild(btn);
-    console.log('Debug button injected at top of page.');
-}
-
 async function handleNavigation() {
-    injectDebugButton();
     console.log('Navigation event/initial run triggered.');
+    removeOldBadge(); // Clear old badge immediately on navigation
+
     let attempts = 0;
-    const maxAttempts = 10;
+    const maxAttempts = 20; // Increase to 10 seconds (500ms * 20) for more reliability
 
     const poller = setInterval(async () => {
         attempts++;
+        console.log(`Polling for title... attempt ${attempts}/${maxAttempts}`);
+
         const titleElement = document.querySelector('h1.ytd-watch-metadata');
         const titleText = titleElement?.innerText?.trim();
 
         if (titleElement && titleText) {
             clearInterval(poller);
+            console.log('Title element found automatically!');
             const description = document.querySelector('#description-inline-expander')?.innerText || '';
             const locationData = await fetchLocation(titleText, description);
             injectBadge(locationData);
         } else if (attempts >= maxAttempts) {
             clearInterval(poller);
-            console.warn('Title element not found. Please use the "Trigger Geo-Check" button at the top.');
+            console.warn('Title element not found. Entering fallback mode.');
+
+            // Try fallback if we can't find the title but want to check the API
+            const fallbackTitle = document.title.replace(' - YouTube', '');
+            const locationData = await fetchLocation(fallbackTitle, 'Fallback Scrape');
+            injectBadge(locationData, true);
         }
     }, 500);
 }
 
+// Ensure it runs on first load and on YouTube's internal navigation
 window.addEventListener('yt-navigate-finish', handleNavigation);
 handleNavigation();
