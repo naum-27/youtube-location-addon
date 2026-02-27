@@ -1,9 +1,9 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 
 export default async function handler(req, res) {
-    const apiKey = process.env.AI_KEY;
+    const apiKey = process.env.OPENAI_API_KEY?.trim();
     if (!apiKey || apiKey === 'undefined') {
-        return res.status(401).json({ error: 'AI_KEY is not configured in Vercel settings' });
+        return res.status(401).json({ error: 'OPENAI_API_KEY is not configured in Vercel settings' });
     }
 
     // CORS Configuration
@@ -32,43 +32,30 @@ export default async function handler(req, res) {
     }
 
     try {
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const openai = new OpenAI({ apiKey });
 
         const prompt = `Analyze this YouTube video info and return ONLY a JSON object with keys "city", "country", and "confidence_score". Title: ${title} Description: ${description || ''}`;
 
-        let result;
-        try {
-            result = await model.generateContent({
-                contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                generationConfig: {
-                    response_mime_type: "application/json",
-                },
-            });
-        } catch (aiError) {
-            console.error('CRITICAL: Gemini SDK generateContent failed:', aiError.message);
-            console.error('Full Error Object:', JSON.stringify(aiError, null, 2));
-            return res.status(502).json({
-                error: 'Failed to connect to AI service',
-                message: aiError.message
-            });
-        }
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+                { role: "system", content: "You are a helpful assistant that detects geographical locations from video metadata. You must return only valid JSON." },
+                { role: "user", content: prompt }
+            ],
+            response_format: { type: "json_object" }
+        });
 
-        let resultText = result.response.text();
+        const resultText = response.choices[0].message.content;
 
         if (!resultText) {
             return res.status(500).json({ error: 'Empty response from AI' });
         }
-
-        // Clean up response if it contains markdown code blocks
-        resultText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
 
         try {
             const resultJson = JSON.parse(resultText);
             return res.status(200).json(resultJson);
         } catch (parseError) {
             console.error('JSON Parse Error. Content was:', resultText);
-            // Fallback if it's just a string
             return res.status(200).json({
                 city: null,
                 country: resultText.substring(0, 50),
