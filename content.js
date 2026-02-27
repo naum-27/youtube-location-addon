@@ -1,6 +1,7 @@
 console.log('--- GEO ADDON STARTING ---');
 
-const API_URL = `${'https://youtube-location-addon.vercel.app'}/api/guess`;
+const API_ENDPOINT = new URL('https://youtube-location-addon.vercel.app/api/guess');
+console.log('Targeting URL:', API_ENDPOINT.toString());
 
 function removeOldBadge() {
     const oldBadge = document.getElementById('yt-geo-location-v2');
@@ -13,7 +14,7 @@ function removeOldBadge() {
 async function fetchLocation(title, description) {
     console.log('Fetching location for:', title);
     try {
-        const response = await fetch(API_URL, {
+        const response = await fetch(API_ENDPOINT.toString(), {
             method: 'POST',
             mode: 'cors',
             headers: {
