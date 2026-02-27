@@ -1,20 +1,16 @@
 {
     "manifest_version": 3,
-    "name": "YouTube Geo-Locator",
+    "name": "YouTube Location Addon",
     "version": "1.0",
-    "description": "Guess the location of a YouTube video based on its title and description.",
-    "permissions": [
-        "activeTab",
-        "scripting"
-    ],
+    "description": "Guesses the location of a YouTube video based on its title and description.",
     "host_permissions": [
         "https://www.youtube.com/*",
-        "https://your-vercel-proxy-url.vercel.app/*"
+        "https://youtube-location-addon.vercel.app/*"
     ],
     "content_scripts": [
         {
             "matches": [
-                "*://*.youtube.com/watch*"
+                "https://www.youtube.com/watch?v=*"
             ],
             "js": [
                 "content.js"
@@ -26,7 +22,7 @@
     ],
     "browser_specific_settings": {
         "gecko": {
-            "id": "youtube-geo-locator@yourdomain.com"
+            "id": "youtube-location-addon@naum.dev"
         }
     }
 }

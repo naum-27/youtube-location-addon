@@ -1,0 +1,32 @@
+#yt-location-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #272727;
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 18px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    cursor: default;
+    transition: background-color 0.2s;
+    font-family: "Roboto", "Arial", sans-serif;
+    border: none;
+    width: fit-content;
+    position: relative;
+    z-index: 9999;
+}
+
+#yt-location-badge:hover {
+    background-color: #3f3f3f;
+}
+
+/* Ensure it works in dark/light mode context if needed */
+html[system-icons] #yt-location-badge {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+html[system-icons] #yt-location-badge:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
