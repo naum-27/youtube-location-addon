@@ -94,7 +94,14 @@ async function handleNavigation() {
         if (titleElement && titleText) {
             clearInterval(poller);
             console.log('Title element found automatically!');
-            const description = document.querySelector('#description-inline-expander')?.innerText || '';
+
+            // Extract and clean description (clamped to 1000 chars)
+            const descriptionElement = document.querySelector('#description-inline-expander') ||
+                document.querySelector('#description');
+            let description = descriptionElement?.innerText || '';
+            description = description.substring(0, 1000).trim();
+
+            console.log(`Sending title and ${description.length} chars of description.`);
             const locationData = await fetchLocation(titleText, description);
             injectBadge(locationData);
         } else if (attempts >= maxAttempts) {

@@ -34,7 +34,9 @@ export default async function handler(req, res) {
     try {
         const openai = new OpenAI({ apiKey });
 
-        const prompt = `Analyze this YouTube video info and return ONLY a JSON object with keys "city", "country", and "confidence_score". Title: ${title} Description: ${description || ''}`;
+        const prompt = `Based on the following YouTube video title AND description, predict the most likely city and country where this was filmed. Return ONLY a JSON object with keys "city", "country", and "confidence_score". 
+        Title: "${title}"
+        Description: "${description || 'No description provided'}"`;
 
         const response = await openai.chat.completions.create({
             model: "gpt-4o-mini",
